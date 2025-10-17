@@ -1,8 +1,10 @@
+import Draft from "./components/Draft"
+
 function App() {
   return (
-    <>
-      <h1>Hello World</h1>
-    </>
+    <div className="">
+      <Draft />
+    </div>
   )
 }
 

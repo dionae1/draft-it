@@ -10,8 +10,8 @@ image_url = (
 class DataService:
 
     def __init__(self):
-        self.check_local_data()
         self.version = self.get_version()
+        self.check_local_data()
         self.data = self.load_local_data()
         self.formatted_data = self.get_data()
 
@@ -24,9 +24,7 @@ class DataService:
         else:
             response.raise_for_status()
 
-    def format_image_url(self, champion: str):
-        version = self.get_version()
-        assert version is not None
+    def format_image_url(self, champion: str, version: str) -> str:
         new_url = image_url.replace("#version", version)
         new_url = new_url.replace("#champion", champion)
 
@@ -40,16 +38,15 @@ class DataService:
             response.raise_for_status()
 
     def update_local_content(self):
-        version = self.get_version()
+        latest_version = self.version
+        assert latest_version is not None
 
-        assert version is not None
-        new_url = url.replace("#version", version)
+        new_url = url.replace("#version", latest_version)
         data = self.fetch_data(new_url)
-        local_data = self.load_local_data()
-        if local_data is None:
-            raise Exception("Could not load local content")
 
-        self.create_formatted_content(data=local_data["data"])
+        assert data is not None
+
+        self.create_formatted_content(data=data["data"])
 
         if data is None:
             raise Exception("Invalid data")
@@ -63,13 +60,30 @@ class DataService:
             with open("app/content.json", "rt") as f:
                 if f.readable():
                     return json.load(f)
+
         except (FileNotFoundError, json.JSONDecodeError):
-            return None
+            print("No local content found. Trying to update...")
+            self.update_local_content()
+
+            try:
+                with open("app/content.json", "rt") as f:
+                    if f.readable():
+                        return json.load(f)
+
+            except (FileNotFoundError, json.JSONDecodeError):
+                return None
+
+        return None
 
     def create_formatted_content(self, data: dict):
         new_data = {}
+        latest_version = self.version
+        assert latest_version is not None
+
         for champion in data:
-            champion_url = self.format_image_url(champion=champion)
+            champion_url = self.format_image_url(
+                champion=champion, version=latest_version
+            )
 
             new_data.update()
             new_data[champion] = {}
@@ -90,7 +104,7 @@ class DataService:
         if local_data is None:
             raise Exception("Could not load local content")
 
-        version = self.get_version()
+        version = self.version
         content_version = (
             local_data["version"] if local_data and "version" in local_data else None
         )
@@ -107,5 +121,10 @@ class DataService:
                 if f.readable():
                     return json.load(f)
         except (FileNotFoundError, json.JSONDecodeError):
-            print("Could not load formatted content")
+            print("No formatted content found. Trying to create it...")
+            local_data = self.load_local_data()
+
+            if local_data and "data" in local_data:
+                self.create_formatted_content(data=local_data["data"])
+                return self.get_data()
             return None
