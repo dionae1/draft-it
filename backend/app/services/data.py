@@ -1,9 +1,9 @@
 import requests
 import json
 
-url = "https://ddragon.leagueoflegends.com/cdn/15.20.1/data/en_US/champion.json"
+url = "https://ddragon.leagueoflegends.com/cdn/#version/data/en_US/champion.json"
 image_url = (
-    "https://ddragon.leagueoflegends.com/cdn/img/champion/loading/#champion_0.jpg"
+    "https://ddragon.leagueoflegends.com/cdn/#version/img/champion/#champion.png"
 )
 
 
@@ -25,7 +25,12 @@ class DataService:
             response.raise_for_status()
 
     def format_image_url(self, champion: str):
-        return image_url.replace("#champion", champion)
+        version = self.get_version()
+        assert version is not None
+        new_url = image_url.replace("#version", version)
+        new_url = new_url.replace("#champion", champion)
+
+        return new_url
 
     def fetch_data(self, url: str):
         response = requests.get(url)
@@ -35,7 +40,16 @@ class DataService:
             response.raise_for_status()
 
     def update_local_content(self):
-        data = self.fetch_data(url)
+        version = self.get_version()
+
+        assert version is not None
+        new_url = url.replace("#version", version)
+        data = self.fetch_data(new_url)
+        local_data = self.load_local_data()
+        if local_data is None:
+            raise Exception("Could not load local content")
+
+        self.create_formatted_content(data=local_data["data"])
 
         if data is None:
             raise Exception("Invalid data")
@@ -86,8 +100,6 @@ class DataService:
             self.update_local_content()
         else:
             print("Local content is uptodate!")
-
-        self.create_formatted_content(data=local_data["data"])
 
     def get_data(self) -> dict | None:
         try:
