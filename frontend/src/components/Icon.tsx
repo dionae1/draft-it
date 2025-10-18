@@ -1,11 +1,8 @@
-interface Info {
-    name: string
-    url: string
-}
+import type { Champion } from "../types/Data";
 
-function Icon({ champion, handleSelect, isActive }: { champion: Info; handleSelect: (champion: Info) => void; isActive: boolean }) {
+function Icon({ champion, handleSelect, isActive }: { champion: Champion; handleSelect: (champion: Champion) => void; isActive: boolean }) {
     if (!isActive) return (
-        <li key={champion.name} className="m-auto opacity-50 pointer-events-none">
+        <li key={champion.name} className="m-auto opacity-75 pointer-events-none">
             <img src={champion.url} alt={champion.name} className="w-28 h-28 object-cover object-top" />
             <p className="text-xl text-center">{champion.name}</p>
         </li>
@@ -16,7 +13,7 @@ function Icon({ champion, handleSelect, isActive }: { champion: Info; handleSele
         <li key={champion.name} className="m-auto"
             onClick={() => handleSelect(champion)}
         >
-            <img src={champion.url} alt={champion.name} className="w-28 h-28 object-cover object-top hover:cursor-pointer hover:brightness-120" />
+            <img src={champion.url} alt={champion.name} className="w-28 h-28 object-cover object-top hover:cursor-pointer hover:brightness-120 hover:scale-101 transition-transform duration-75" />
             <p className="text-xl text-center">{champion.name}</p>
         </li>
     );
