@@ -7,11 +7,16 @@ import Icon from "./Icon"
 
 import type { Champion } from "../types/Data";
 
-type Action = "pick" | "ban" | "complete"
+type Action = "pick" | "ban" | "complete" | "starting"
 
-function Draft() {
+interface DraftProps {
+    onComplete?: (picks: Array<Champion>) => void,
+    fearlessBans?: Array<Champion>
+}
+
+function Draft({ onComplete, fearlessBans }: DraftProps) {
     const [data, setData] = useState<Array<Champion> | null>(null)
-    const [action, setAction] = useState<Action>("ban")
+    const [action, setAction] = useState<Action>("starting")
 
     const [pickIndex, setPickIndex] = useState<number>(0)
     const [pickedChampions, setPickedChampions] = useState<Array<Champion>>([])
@@ -61,12 +66,14 @@ function Draft() {
     }
 
     const handleConfirm = () => {
-        if (action === "ban") {
-            if (banIndex === 0) {
-                setBanIndex(1)
-                return
-            }
 
+        if (action === "starting") {
+            setAction("ban")
+            setBanIndex(1)
+            return
+        }
+
+        if (action === "ban") {
             if (!bannedChampions[banIndex])
                 return
 
@@ -99,9 +106,17 @@ function Draft() {
 
         if (pickIndex === 10) {
             setAction("complete")
+
+            if (onComplete) onComplete(pickedChampions.slice(1))
         }
     }
 
+    const isTaken = (champion: Champion) => {
+        const byName = (arr?: Array<Champion>) =>
+            !!arr && arr.some((c) => c && c.name === champion.name)
+
+        return byName(bannedChampions) || byName(pickedChampions) || byName(fearlessBans)
+    }
 
     return (
         <div className="grid grid-cols-[1fr_3fr_1fr]">
@@ -147,7 +162,7 @@ function Draft() {
                                         champion={champion}
                                         handleSelect={handleSelect}
                                         isActive={
-                                            ((banIndex > 0) && !(bannedChampions.includes(champion) || pickedChampions.includes(champion)))
+                                            ((action !== "starting") && !isTaken(champion))
                                         }
                                     />
                                 ))
@@ -158,8 +173,8 @@ function Draft() {
                     {
                         pickIndex > 10 ? <h2 className="text-3xl mt-4">Draft Complete!</h2> :
                             <button
-                                className="mt-4 p-2 border-2 hover:cursor-pointer"
-                                onClick={handleConfirm}>{`${banIndex > 0 ? 'Confirm' : 'Start'}`}
+                                className="mt-4 p-6 text-3xl bg-gray-400 border-2 rounded-xl hover:cursor-pointer"
+                                onClick={handleConfirm}>{`${action === "starting" ? 'Start' : 'Confirm'}`}
                             </button>
                     }
 

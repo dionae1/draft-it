@@ -7,10 +7,20 @@ function Home() {
         navigate("/classic");
     };
 
+    const goToFearlessDraft = () => {
+        navigate("/fearless");
+    };
+
     return (
         <div>
             <h1>Home Page</h1>
-            <button onClick={goToClassicDraft}>Go to Classic Draft</button>
+            <div>
+                <button onClick={goToClassicDraft}>Go to Classic Draft</button>
+            </div>
+            <div>
+                <button onClick={goToFearlessDraft}>Go to Fearless Draft</button>
+            </div>
+
         </div>
     );
 }
