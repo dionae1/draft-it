@@ -173,7 +173,7 @@ function Draft({ onComplete, fearlessBans }: DraftProps) {
                     {
                         pickIndex > 10 ? <h2 className="text-3xl mt-4">Draft Complete!</h2> :
                             <button
-                                className="mt-4 p-6 text-3xl bg-gray-400 border-2 rounded-xl hover:cursor-pointer"
+                                className="p-2 text-2xl rounded-md w-32 text-center hover:bg-white hover:text-black transition mt-4 border-2 border-white hover:cursor-pointer"
                                 onClick={handleConfirm}>{`${action === "starting" ? 'Start' : 'Confirm'}`}
                             </button>
                     }
