@@ -25,24 +25,29 @@ function FearlessDraft() {
             {modeSelection && (
                 <div className="p-10 m-10 text-center">
                     <h2 className="text-4xl mb-6">Select Draft Mode</h2>
-                    <button
-                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-4 hover:cursor-pointer"
-                        onClick={() => {
-                            setModeSelection(false);
-                            setMaxStages(5);
-                        }}
-                    >
-                        BO5
-                    </button>
-                    <button
-                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded hover:cursor-pointer"
-                        onClick={() => {
-                            setModeSelection(false);
-                            setMaxStages(3);
-                        }}
-                    >
-                        BO3
-                    </button>
+                    <p className="mb-4 text-xl">Choose between Best of 3 (BO3) or Best of 5 (BO5) draft modes.</p>
+                    <div className="flex flex-row justify-center gap-8">
+                        <button
+                            className="text-2xl border-2 border-white p-4 rounded-md w-56 text-center
+                    hover:bg-white hover:text-black transition hover:cursor-pointer"
+                            onClick={() => {
+                                setModeSelection(false);
+                                setMaxStages(5);
+                            }}
+                        >
+                            BO5
+                        </button>
+                        <button
+                            className="text-2xl border-2 border-white p-4 rounded-md w-56 text-center
+                    hover:bg-white hover:text-black transition hover:cursor-pointer"
+                            onClick={() => {
+                                setModeSelection(false);
+                                setMaxStages(3);
+                            }}
+                        >
+                            BO3
+                        </button>
+                    </div>
                 </div>
             )}
 

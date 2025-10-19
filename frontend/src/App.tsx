@@ -10,7 +10,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="home" element={<Home />} />
+        <Route path="/" element={<Home />} />
         <Route path="/" element={<MainLayout />}>
           <Route path="classic" element={<ClassicDraft />} />
           <Route path="fearless" element={<FearlessDraft />} />
